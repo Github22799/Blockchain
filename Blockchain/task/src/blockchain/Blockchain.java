@@ -11,16 +11,16 @@ public class Blockchain implements BasicBlockchain, Iterable<BasicBlock> {
 
     private BasicClock clock;
     private BasicHashGenerator hashGenerator;
-    private BasicBlockFactory blockFactory;
+    private BasicBlockchainFactory factory;
 
     private BasicBlock head;
     private BasicBlock tail;
 
-    public Blockchain(int lastId, BasicClock clock, BasicHashGenerator hashGenerator, BasicBlockFactory blockFactory, BasicBlock head, BasicBlock tail) {
+    public Blockchain(int lastId, BasicClock clock, BasicHashGenerator hashGenerator, BasicBlockchainFactory factory, BasicBlock head, BasicBlock tail) {
         this.lastId = lastId;
         this.clock = clock;
         this.hashGenerator = hashGenerator;
-        this.blockFactory = blockFactory;
+        this.factory = factory;
         this.head = head;
         this.tail = tail;
     }
@@ -30,7 +30,7 @@ public class Blockchain implements BasicBlockchain, Iterable<BasicBlock> {
         long timestamp = clock.getTime();
         String prevHash = tail.getHash();
 
-        BasicBlock block = blockFactory.getNewBlock(lastId++, timestamp, prevHash);
+        BasicBlock block = factory.getNewBlock(lastId++, timestamp, prevHash);
         tail.setNext(block);
         tail = block;
 
