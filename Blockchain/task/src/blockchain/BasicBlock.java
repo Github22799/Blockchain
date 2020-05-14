@@ -6,7 +6,6 @@ public interface BasicBlock {
     long getId();
     long getTimestamp();
     String getPrevHash();
-    void setHash(String hash);
     String getHash();
     String getStringForHashing();
     String toString();

@@ -1,6 +1,7 @@
 package blockchain;
 
 public interface BasicBlockchain {
-    void generateNewBlock();
+    BasicBlock getLastBlock();
+    void acceptNewBlock(BasicBlock block);
     boolean validateBlocks();
 }

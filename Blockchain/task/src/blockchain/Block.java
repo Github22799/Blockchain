@@ -4,15 +4,23 @@ public class Block implements BasicBlock {
 
     private BasicBlock next;
 
-    private long Id;
-    private long timestamp;
-    private String prevHash;
-    private String hash;
+    private final long Id;
+    private final long timestamp;
+    private final String prevHash;
+    private final String hash;
 
-    public Block(long id, long timestamp, String prevHash) {
+    public Block(long id, long timestamp, String prevHash, String hash) {
         Id = id;
         this.timestamp = timestamp;
         this.prevHash = prevHash;
+        this.hash = hash;
+    }
+
+    public Block(long id, long timestamp, String prevHash, BasicHashGenerator hashGenerator) {
+        Id = id;
+        this.timestamp = timestamp;
+        this.prevHash = prevHash;
+        this.hash = hashGenerator.getHash(getStringForHashing());
     }
 
     @Override
@@ -38,11 +46,6 @@ public class Block implements BasicBlock {
     @Override
     public String getPrevHash() {
         return prevHash;
-    }
-
-    @Override
-    public void setHash(String hash) {
-        this.hash = hash;
     }
 
     @Override

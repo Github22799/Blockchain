@@ -1,6 +1,8 @@
 package blockchain;
 
 public interface BasicBlockchainFactory {
-    BasicBlock getNewBlock(long id, long timestamp, String prevHash);
+    Block generateNewBlock(long id, long timestamp, String prevHash, String hash);
+    BasicBlock generateNewBlock(long id, long timestamp, String prevHash);
+    BasicBlock generateNewBlock(BasicBlockchain blockchain);
     BasicBlockchain getNewBlockchain();
 }

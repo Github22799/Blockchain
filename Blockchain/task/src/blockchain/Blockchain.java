@@ -7,35 +7,43 @@ import java.util.Iterator;
 public class Blockchain implements BasicBlockchain, Iterable<BasicBlock> {
 
     public static final String INITIAL_HASH = "0";
-    private int lastId;
+    private long lastId;
 
-    private BasicClock clock;
     private BasicHashGenerator hashGenerator;
-    private BasicBlockchainFactory factory;
 
     private BasicBlock head;
     private BasicBlock tail;
 
-    public Blockchain(int lastId, BasicClock clock, BasicHashGenerator hashGenerator, BasicBlockchainFactory factory, BasicBlock head, BasicBlock tail) {
+    public Blockchain(long lastId, BasicHashGenerator hashGenerator, BasicBlock head, BasicBlock tail) {
         this.lastId = lastId;
-        this.clock = clock;
         this.hashGenerator = hashGenerator;
-        this.factory = factory;
         this.head = head;
         this.tail = tail;
     }
 
     @Override
-    public void generateNewBlock() {
-        long timestamp = clock.getTime();
-        String prevHash = tail.getHash();
+    public BasicBlock getLastBlock() {
+        return tail;
+    }
 
-        BasicBlock block = factory.getNewBlock(lastId++, timestamp, prevHash);
+    @Override
+    public void acceptNewBlock(BasicBlock block) {
+
+        String blockHash = hashGenerator.getHash(block.getStringForHashing());
+
+        if (!isValidLastBlock(block, blockHash))
+            return;
+
+        lastId++;
+
         tail.setNext(block);
         tail = block;
+    }
 
-        String hash = hashGenerator.getHash(tail.getStringForHashing());
-        tail.setHash(hash);
+    private boolean isValidLastBlock(BasicBlock block, String blockHash) {
+        return  block.getId() == lastId + 1 &&
+                tail.getHash().equals(block.getPrevHash()) &&
+                blockHash.equals(block.getHash());
     }
 
     @Override
@@ -48,7 +56,7 @@ public class Blockchain implements BasicBlockchain, Iterable<BasicBlock> {
 
             String currentHash = hashGenerator.getHash(block.getStringForHashing());
 
-            if (!isValidBlock(prevHash, currentHash, block))
+            if (!isValidLastBlock(prevHash, currentHash, block))
                 return false;
 
             prevHash = currentHash;
@@ -59,21 +67,21 @@ public class Blockchain implements BasicBlockchain, Iterable<BasicBlock> {
         return true;
     }
 
-    private boolean isValidBlock(String prevHash, String currentHash, BasicBlock block) {
+    private boolean isValidLastBlock(String prevHash, String currentHash, BasicBlock block) {
         return block.getPrevHash().equals(prevHash) && block.getHash().equals(currentHash);
     }
 
     @NotNull
     @Override
     public Iterator<BasicBlock> iterator() {
-        return new BlockChainIterator(head);
+        return new BlockchainIterator(head);
     }
 
-    public class BlockChainIterator implements Iterator<BasicBlock>
+    public class BlockchainIterator implements Iterator<BasicBlock>
     {
         BasicBlock current;
 
-        public BlockChainIterator(BasicBlock current) {
+        public BlockchainIterator(BasicBlock current) {
             this.current = current;
         }
 
@@ -84,9 +92,8 @@ public class Blockchain implements BasicBlockchain, Iterable<BasicBlock> {
 
         @Override
         public BasicBlock next() {
-            BasicBlock block = current;
             current = current.getNext();
-            return block;
+            return current;
         }
     }
 }
