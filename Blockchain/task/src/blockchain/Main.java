@@ -22,7 +22,7 @@ public class Main {
 
         printBlockchain(blockchain);
 
-        // System.out.println(blockchain.validateBlocks());
+        System.out.println(blockchain.validateBlocks());
 
     }
 }

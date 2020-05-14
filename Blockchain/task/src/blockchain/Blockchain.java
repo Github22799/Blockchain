@@ -51,9 +51,10 @@ public class Blockchain implements BasicBlockchain, Iterable<BasicBlock> {
 
         String prevHash = INITIAL_HASH;
 
-        BasicBlock block = head;
-        do {
+        BasicBlock block = head.getNext();
 
+        while (block != null)
+        {
             String currentHash = hashGenerator.getHash(block.getStringForHashing());
 
             if (!isValidLastBlock(prevHash, currentHash, block))
@@ -61,8 +62,7 @@ public class Blockchain implements BasicBlockchain, Iterable<BasicBlock> {
 
             prevHash = currentHash;
             block = block.getNext();
-
-        } while (block != tail);
+        }
 
         return true;
     }
